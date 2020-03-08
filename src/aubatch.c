@@ -13,6 +13,6 @@
 #include "commandline_parser.h"
 
 int main(void) {
-	run_cmd();
+	run_interface();
 	return EXIT_SUCCESS;
 }
