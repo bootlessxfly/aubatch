@@ -6,17 +6,23 @@
 C_SRCS += \
 ../src/aubatch.c \
 ../src/batch_job.c \
-../src/commandline_parser.c 
+../src/commandline_parser.c \
+../src/process.c \
+../src/schedular.c 
 
 OBJS += \
 ./src/aubatch.o \
 ./src/batch_job.o \
-./src/commandline_parser.o 
+./src/commandline_parser.o \
+./src/process.o \
+./src/schedular.o 
 
 C_DEPS += \
 ./src/aubatch.d \
 ./src/batch_job.d \
-./src/commandline_parser.d 
+./src/commandline_parser.d \
+./src/process.d \
+./src/schedular.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

@@ -32,6 +32,8 @@ int cmd_helpmenu(int n, char **a);
 #define MAXMENUARGS  4
 #define MAXCMDLINE   64
 
+//int schedular_policy = 0; //Defaults to FCFS
+
 /*
  *  Command table.
  *  Taken from Dr. Qin's "commlandline_parser.c" example
@@ -64,6 +66,9 @@ static const char *helpmenu[] = {
         /* Please add more menu options below */
 	NULL
 };
+
+char *otherargs[MAXMENUARGS];
+int policy;
 
 
 

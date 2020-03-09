@@ -15,6 +15,9 @@
 #include <assert.h>
 #include <string.h>
 #include "commandline_parser.h"
+#include "jobs.h"
+#include "schedular.h"
+
 
 /*
  * The run command - submit a job.
@@ -25,10 +28,11 @@ int cmd_run(int nargs, char **args) {
 		printf("Usage: run <job> <time> <priority>\n");
 		return EINVAL;
 	}
-
         /* Use execv to run the submitted job in AUbatch */
-        printf("use execv to run the job in AUbatch.\n");
-      	return 0; /* if succeed */
+        //printf("use execv to run the job in AUbatch.\n");
+	run_policy(policy, otherargs);
+	struct job j = jobs[job_head];
+    return 0; /* if succeed */
 }
 
 /*
@@ -125,6 +129,7 @@ int cmd_dispatch(char *cmd)
 			return E2BIG;
 		}
 		args[nargs++] = word;
+		otherargs[nargs - 1] = word;
 	}
 
 	if (nargs==0) {
@@ -146,10 +151,11 @@ int cmd_dispatch(char *cmd)
 }
 
 int run_interface() {
+	policy = FCFS_ID; // Default initial policy to FCFS
 	size_t parmsize = 64;
 	char* parms = (char*) malloc(parmsize * sizeof(char));
 	if (parms == NULL) {
-		printf("run_cmd() ...Error occured in malloc\n");
+		printf("run_interface() ...Error occured in malloc\n");
 		exit(1);
 	}
 

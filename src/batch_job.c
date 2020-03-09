@@ -4,14 +4,15 @@
  Author      : Christoph White
  Version     :
  Copyright   :
- Description : Hello World in C, Ansi-style
+ Description : Used Dr. Qin's "process.c" Code as an example
  ============================================================================
  */
 
 #include <stdio.h>
-#include <stdlib.h>
+#include "batch_job.h"
 
-int test(void) {
-	puts("This is AU batch"); /* prints !!!!!! */
-	return EXIT_SUCCESS;
+int dispatch_jobs() {
+	printf("Dummy dispatchor\n");
 }
+
+
