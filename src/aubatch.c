@@ -12,7 +12,8 @@
 #include <stdlib.h>
 #include "commandline_parser.h"
 #include "aubatch.h"
-#include "batch_job.h"
+
+#include "dispatcher.h"
 
 
 int main(void) {
@@ -27,8 +28,6 @@ int main(void) {
 
 	ret = pthread_create(&cli_thread, NULL, run_cli, (void*) cli_message);
 	ret1 = pthread_create(&dispatch_thread, NULL, run_dispatchor, (void*) dispatch_message);
-	strcpy(jobs->_jobname, "Test1");
-	jobs[0].priority = 1;
 	//printf("Test p: %d", priority);
     pthread_mutex_init(&cmd_queue_lock, NULL);
     pthread_cond_init(&cmd_buf_not_full, NULL);

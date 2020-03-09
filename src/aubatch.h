@@ -12,7 +12,7 @@
 int run_cli();
 int run_dispatchor();
 
-struct job jobs[10000];
+struct job jobs[JOB_QUEUE_SIZE];
 u_int job_head;
 u_int job_tail; // The end of the queue. job_tail - 1 is the queue ending index.
 u_int count;
