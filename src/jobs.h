@@ -16,7 +16,7 @@
 struct job {
 	char _jobname[100];
 	int priority;
-	double exectime;
+	int exectime;
 	int arrivalTime;
 	char *arrivalTimeString;
 	int status;
@@ -25,6 +25,7 @@ struct job {
 
 extern struct job jobs[JOB_QUEUE_SIZE];
 extern u_int job_head;
+extern u_int run_head;
 extern u_int circular;
 extern u_int count;
 extern time_t timer;

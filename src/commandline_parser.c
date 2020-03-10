@@ -19,6 +19,78 @@
 #include "schedular.h"
 
 
+int cmd_list(int nargs, char **args) {
+	char *policyname = malloc(7);
+	int start;
+	int end;
+	if (policy == FCFS_ID) {
+		strcpy(policyname, "FCFS");
+	}
+	if (count == 0) {
+		printf("Total number of jobs in the queue: %d\n", count);
+		printf("Scheduling Policy: %s\n", policyname);
+		printf("There are no jobs to display\n");
+		return EXIT_SUCCESS;
+	}
+	else {
+		printf("Total number of jobs in the queue: %d\n", count);
+		printf("Scheduling Policy: %s\n", policyname);
+		/*
+		 * Printing the list can take a job name of size 15 before things start printing weirdly
+		 */
+		printf("Name            CPU_Time Pri Arrival_time Progress\n");
+		start = run_head - 1;
+		end = start + count;
+		for (int i = start; i < end; i++) {
+			struct job j = jobs[i];
+			print_job(&j);
+		}
+		return EXIT_SUCCESS;
+	}
+}
+
+void print_job(struct job *j) {
+	int comp;
+	printf(j->_jobname);
+	comp = strlen(j->_jobname);
+
+	for (int i = 0; i <= (15 - comp); i++) {
+		printf(" ");
+	}
+
+	printf("%d", j->exectime);
+	comp = j->exectime;
+	for (int i = 0; i < 8; i++) {
+		comp = comp / 10;
+		if (comp < 1) {
+			printf(" ");
+		}
+	}
+	printf("%d", j->priority);
+	if (j->priority >= 100) {
+		printf(" ");
+	}
+	else if (j->priority >= 10) {
+		printf("  ");
+	}
+	else {
+		printf("   ");
+	}
+	printf(j->arrivalTimeString);
+	printf("     ");
+	if (j->status == 1) {
+		printf("Running\n");
+	}
+	else if (j->status == 0){
+		printf("Waiting\n");
+	}
+	else {
+		// This should probably not ever happen, but am adding this in case it does
+		printf("Completed!\n");
+	}
+
+}
+
 /*
  * The run command - submit a job.
  * Taken from Dr. Qin's "commlandline_parser.c" example

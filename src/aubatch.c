@@ -24,6 +24,7 @@ int main(void) {
 
 	int ret, ret1;
 	job_head = 0;
+	run_head = 0;
 	circular = 0;
 	count = 0;
 	timer = time(NULL);

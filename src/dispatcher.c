@@ -24,16 +24,23 @@ int dispatch_jobs() {
 		struct job j;
 		// If the circular buffer just reset to the beginning,
 		// use the job from the end of the buffer
-		if (job_head == 0 && circular == 1) {
+		if (run_head == 0 && circular == 1) {
 			j = jobs[JOB_QUEUE_SIZE - 1];
 		}
 		else {
 			// else use the current head index
-			j = jobs[job_head - 1];
+			j = jobs[run_head];
 		}
 		// Set the satus to running
 		j.status = 1;
-		jobs[job_head - 1] = j;
+		jobs[run_head] = j;
+		run_head++;
+		/*
+		 * Reset the circular buffer
+		 */
+		if (run_head == JOB_QUEUE_SIZE) {
+			run_head = 0;
+		}
 		pthread_cond_signal(&cmd_buf_not_empty);
 		pthread_mutex_unlock(&cmd_queue_lock);
 		/*
@@ -41,6 +48,9 @@ int dispatch_jobs() {
 		 * the shared jobs queue so that while a job is processing, the CPU can still schedule other jobs
 		 */
 		run_job(j);
+		pthread_mutex_lock(&cmd_queue_lock);
+		jobs[run_head - 1].status = 2;
+		pthread_mutex_unlock(&cmd_queue_lock);
 		count--;
 
 		circular = 1;

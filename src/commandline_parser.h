@@ -20,6 +20,7 @@ int cmd_run(int nargs, char **args);
 int cmd_quit(int nargs, char **args);
 void showmenu(const char *name, const char *x[]);
 int cmd_helpmenu(int n, char **a);
+int cmd_list();
 
 /*
  * Error Codes.
@@ -50,6 +51,7 @@ static struct {
 	{ "run",	cmd_run },
 	{ "q\n",	cmd_quit },
 	{ "quit\n",	cmd_quit },
+	{ "list\n", cmd_list },
         /* Please add more operations below. */
         {NULL, NULL}
 };
@@ -63,6 +65,7 @@ static const char *helpmenu[] = {
 	"[run] <job> <time> <priority>       ",
 	"[quit] Exit AUbatch                 ",
 	"[help] Print help menu              ",
+	"[list] display the job status       ",
         /* Please add more menu options below */
 	NULL
 };

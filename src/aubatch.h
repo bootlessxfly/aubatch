@@ -14,6 +14,7 @@ int run_dispatchor();
 
 struct job jobs[JOB_QUEUE_SIZE];
 u_int job_head;
+u_int run_head;
 u_int circular; //This represents the last job buffer. Used when head goes back to 0
 u_int count;
 time_t timer;
