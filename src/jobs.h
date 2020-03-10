@@ -18,6 +18,7 @@ struct job {
 	int priority;
 	int exectime;
 	int arrivalTime;
+	int waitingTime;
 	char *arrivalTimeString;
 	int status;
 
@@ -29,6 +30,13 @@ extern u_int run_head;
 extern u_int circular;
 extern u_int count;
 extern time_t timer;
+/*
+ * The process time measures current progress of a process in seconds
+ * It is used to accurately measure waiting time.
+ */
+extern time_t process_time;
+
+extern char *policyname;
 
 extern pthread_mutex_t cmd_queue_lock;  /* Lock for critical sections */
 extern pthread_cond_t cmd_buf_not_full; /* Condition variable for buf_not_full */

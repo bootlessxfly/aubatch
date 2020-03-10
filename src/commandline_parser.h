@@ -20,7 +20,8 @@ int cmd_run(int nargs, char **args);
 int cmd_quit(int nargs, char **args);
 void showmenu(const char *name, const char *x[]);
 int cmd_helpmenu(int n, char **a);
-int cmd_list();
+int cmd_list(int nargs, char **args);
+int cmd_bench(int nargs, char **args);
 
 /*
  * Error Codes.
@@ -52,6 +53,7 @@ static struct {
 	{ "q\n",	cmd_quit },
 	{ "quit\n",	cmd_quit },
 	{ "list\n", cmd_list },
+	{ "test\n", cmd_bench },
         /* Please add more operations below. */
         {NULL, NULL}
 };
@@ -65,7 +67,11 @@ static const char *helpmenu[] = {
 	"[run] <job> <time> <priority>       ",
 	"[quit] Exit AUbatch                 ",
 	"[help] Print help menu              ",
-	"[list] display the job status       ",
+	"[list] Display the job status       ",
+	"[fcfs] Change the scheduling policy to FCFS.",
+	"[sjf] Change the scheduling policy to SJF.",
+	"[priority] Change the scheduling policy to priority.",
+	"[test] <benchmark> <policy> <num_of_jobs> <priority_levels> <min_CPU_time> <max_CPU_time>",
         /* Please add more menu options below */
 	NULL
 };

@@ -18,6 +18,9 @@ u_int run_head;
 u_int circular; //This represents the last job buffer. Used when head goes back to 0
 u_int count;
 time_t timer;
+time_t process_time;
+
+char *policyname;
 
 /*
  * From Dr. Qin's aubatch_sample.c

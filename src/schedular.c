@@ -9,19 +9,40 @@
 #include <string.h>
 #include <time.h>
 
-int run_policy(int policy, char *otherargs[]) {
-	/*
-	 * Create the job
-	 */
+int run_policy(int policy) {
+	if (policy == FCFS_ID) {
+		strcpy(policyname, "FCFS");
+	}
+	else if (policy == SJF_ID) {
+		strcpy(policyname, "SFJ");
+	}
+	else if (policy == PRIO_ID) {
+		strcpy(policyname, "priority");
+	}
+
+}
+
+int add_job(int policy, char *otherargs[]) {
+	//char *policyname = malloc(7);
 	struct job j;
 	create_job(otherargs, &j);
 	if (policy == FCFS_ID) {
 		fcfs(j);
 	}
+	else if (policy == SJF_ID) {
+
+	}
+	else if (policy == PRIO_ID) {
+
+	}
+	printf("Job %s was submitted.\n"
+			"Total number of jobs in the queue: %d\n"
+			"Expected waiting time is: %d seconds\n"
+			"Scheduling Policy: %s\n",
+			j._jobname, count, j.waitingTime, policyname);
 }
 
 int fcfs(struct job j) {
-	puts("Adding new job under FCFS");
 	/*
 	 * Only set the arrival time once actually placed in queue.
 	 */
@@ -42,6 +63,32 @@ int fcfs(struct job j) {
 	pthread_cond_signal(&cmd_buf_not_empty);
 	pthread_mutex_unlock(&cmd_queue_lock);
 
+}
+
+/*
+ *
+ */
+int calc_wait() {
+	int start;
+	int end;
+	int totalwait = 0;
+	if (count == 0) {
+		return 0;
+	}
+	start = run_head - 1;
+	end = start + count;
+	for (int i = start; i < end; i++) {
+		if (jobs[i].status == 1) {
+			int now = time(NULL);
+			int elapsed = now - process_time;
+			totalwait = totalwait + (jobs[i].exectime - elapsed);
+		}
+		else {
+			totalwait = totalwait + jobs[i].exectime;
+		}
+
+	}
+	return totalwait;
 }
 
 /*
@@ -161,5 +208,6 @@ void create_job(char *otherargs[], struct job *j) {
 	j->_jobname[strlen(j->_jobname)] = '\0';
 	j->exectime = (double) atoi(otherargs[2]);
 	j->priority = atoi(otherargs[3]);
+	j->waitingTime = calc_wait();
 }
 

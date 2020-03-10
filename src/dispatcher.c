@@ -9,13 +9,12 @@
  */
 
 #include "dispatcher.h"
-
-#include <stdio.h>
 #include "jobs.h"
-
+#include <time.h>
+#include <stdio.h>
+#include <string.h>
 
 int dispatch_jobs() {
-	printf("Dispatchor dispatching things now ...\n");
 	while (1) {
 		pthread_mutex_lock(&cmd_queue_lock);
 		while(count == 0) {
@@ -73,22 +72,21 @@ void run_job(struct job j) {
 //	  args[1] = "5";
 //	  args[2] = "test";
 //	  args[3] = NULL;
-	int time = j.exectime;
+	int etime = j.exectime;
 	args[0] = malloc(sizeof(int));
-	sprintf(args[0], "%d", time);
+	sprintf(args[0], "%d", etime);
 	args[1] = malloc(sizeof(int));
-	sprintf(args[1], "%d", time);
+	sprintf(args[1], "%d", etime);
 	args[2] = malloc(strlen(j._jobname));
 	strcpy(args[2], j._jobname);
 	args[3] = NULL;
-
+	process_time = time(NULL);
 	pid = fork();
 	if (pid < 0) {
 		puts("There was an error forking the process");
 		return;
 	}
 	else if (pid == 0) {
-		puts("Child running ...");
 		//todo remove target before submitting
 
 		execv("./target/batch_job", args);
@@ -98,17 +96,6 @@ void run_job(struct job j) {
 	else {
 		wait();
 	}
-
-//	//#ifdef DEBUG
-//		printf("Running job: %s\n", j._jobname);
-//	//#endif
-//		// A call to execv should go here
-//		int time = (int) j.exectime;
-//				printf("Time to run is: %d\n", time);
-//	sleep((int) time);
-//	//#ifdef DEBUG
-//		printf("Finished job: %s\n", j._jobname);
-//	//#endif
 }
 
 

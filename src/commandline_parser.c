@@ -19,13 +19,20 @@
 #include "schedular.h"
 
 
+int cmd_bench(int nargs, char **args) {
+	if (nargs != 7) {
+		printf("usage: test <benchmark> <policy> <num_of_jobs> <priority_levels> <min_CPU_time> <max_CPU_time>\n");
+		return EINVAL;
+	}
+}
+
 int cmd_list(int nargs, char **args) {
-	char *policyname = malloc(7);
+//	char *policyname = malloc(7);
 	int start;
 	int end;
-	if (policy == FCFS_ID) {
-		strcpy(policyname, "FCFS");
-	}
+//	if (policy == FCFS_ID) {
+//		strcpy(policyname, "FCFS");
+//	}
 	if (count == 0) {
 		printf("Total number of jobs in the queue: %d\n", count);
 		printf("Scheduling Policy: %s\n", policyname);
@@ -81,12 +88,12 @@ void print_job(struct job *j) {
 	if (j->status == 1) {
 		printf("Running\n");
 	}
-	else if (j->status == 0){
-		printf("Waiting\n");
+	// This should probably not ever happen, but am adding this in case it does
+	else if (j->status == 2){
+		printf("Completed!\n");
 	}
 	else {
-		// This should probably not ever happen, but am adding this in case it does
-		printf("Completed!\n");
+		printf("Waiting!\n");
 	}
 
 }
@@ -102,7 +109,7 @@ int cmd_run(int nargs, char **args) {
 	}
         /* Use execv to run the submitted job in AUbatch */
         //printf("use execv to run the job in AUbatch.\n");
-	run_policy(policy, otherargs);
+	add_job(policy, otherargs);
 	struct job j = jobs[job_head];
     return 0; /* if succeed */
 }
