@@ -17,6 +17,7 @@
 #include "commandline_parser.h"
 #include "jobs.h"
 #include "schedular.h"
+#include "string.h"
 
 
 int cmd_bench(int nargs, char **args) {
@@ -24,6 +25,56 @@ int cmd_bench(int nargs, char **args) {
 		printf("usage: test <benchmark> <policy> <num_of_jobs> <priority_levels> <min_CPU_time> <max_CPU_time>\n");
 		return EINVAL;
 	}
+	char* name = otherargs[1];
+	char* jname = malloc(3 * strlen(name));
+	int policyid;
+	int njob = atoi(otherargs[3]);
+	int nprio = atoi(otherargs[4]) - 1; //Range is 0 to priority_levels -1
+	int mintime = atoi(otherargs[5]);
+	int maxtime = atoi(otherargs[6]);
+	char* stime = malloc(strlen(otherargs[6]));
+	char* sprio = malloc(strlen(otherargs[4]));
+	char* jnum = malloc(strlen(otherargs[3]));
+	int time = 0;
+	int prio = 0;
+	if (strcmp(otherargs[2], "FCFS")) {
+		policyid = FCFS_ID;
+	}
+	else if (strcmp(otherargs[2], "SJF")) {
+		policyid = SJF_ID;
+	}
+	else if (strcmp(otherargs[2], "priority")) {
+		policyid = PRIO_ID;
+	}
+	else {
+		printf("Provided policy %s is not valid. Refer to below list for valid options \n"
+				"\tFCFS, SJF, policy.\n", otherargs[2]);
+		return EXIT_FAILURE;
+	}
+	if (policyid != policy && count > 0) {
+		//trigger a policy change?
+	}
+	else {
+		policy = policyid;
+	}
+	for (int i = 0; i < njob; i++) {
+		prio = rand_range_gen(0, nprio);
+		time = rand_range_gen(mintime, maxtime);
+		strcpy(jname, name);
+		sprintf(jnum, "%d", i + 1);
+		strcat(jname, jnum);
+		sprintf(stime, "%d", time);
+		sprintf(sprio, "%d", prio);
+		add_job(policyid, jname, stime, sprio);
+	}
+}
+
+/*
+ * This is used to generate priority and execution time based off
+ * the range that the benchmark tool gives
+ */
+int rand_range_gen(int low, int high) {
+	return (rand() % (high - low + 1)) + 1;
 }
 
 int cmd_list(int nargs, char **args) {
@@ -109,7 +160,7 @@ int cmd_run(int nargs, char **args) {
 	}
         /* Use execv to run the submitted job in AUbatch */
         //printf("use execv to run the job in AUbatch.\n");
-	add_job(policy, otherargs);
+	add_job(policy, otherargs[1], otherargs[2], otherargs[3]);
 	struct job j = jobs[job_head];
     return 0; /* if succeed */
 }
@@ -230,6 +281,7 @@ int cmd_dispatch(char *cmd)
 }
 
 int run_interface() {
+	srand(time(0));
 	policy = FCFS_ID; // Default initial policy to FCFS
 	size_t parmsize = 64;
 	char* parms = (char*) malloc(parmsize * sizeof(char));

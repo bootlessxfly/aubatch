@@ -22,10 +22,10 @@ int run_policy(int policy) {
 
 }
 
-int add_job(int policy, char *otherargs[]) {
+int add_job(int policy, char *name, char *etime, char* prio) {
 	//char *policyname = malloc(7);
 	struct job j;
-	create_job(otherargs, &j);
+	create_job(name, etime, prio, &j);
 	if (policy == FCFS_ID) {
 		fcfs(j);
 	}
@@ -203,11 +203,11 @@ void build_string(int time, struct job *j) {
 
 
 
-void create_job(char *otherargs[], struct job *j) {
-	strcpy(j->_jobname, otherargs[1]);
+void create_job(char *name, char *etime, char *prio, struct job *j) {
+	strcpy(j->_jobname, name);
 	j->_jobname[strlen(j->_jobname)] = '\0';
-	j->exectime = (double) atoi(otherargs[2]);
-	j->priority = atoi(otherargs[3]);
+	j->exectime = atoi(etime);
+	j->priority = atoi(prio);
 	j->waitingTime = calc_wait();
 }
 

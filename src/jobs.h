@@ -29,6 +29,13 @@ extern u_int job_head;
 extern u_int run_head;
 extern u_int circular;
 extern u_int count;
+/*
+ * Tracks total number of jobs
+ */
+extern u_int total_job_count;
+extern u_int total_turn_bench;
+extern u_int total_wait_bench;
+extern time_t total_bench_t;
 extern time_t timer;
 /*
  * The process time measures current progress of a process in seconds

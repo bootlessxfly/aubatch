@@ -22,6 +22,7 @@ void showmenu(const char *name, const char *x[]);
 int cmd_helpmenu(int n, char **a);
 int cmd_list(int nargs, char **args);
 int cmd_bench(int nargs, char **args);
+int rand_range_gen(int low, int high);
 
 /*
  * Error Codes.
@@ -31,7 +32,7 @@ int cmd_bench(int nargs, char **args);
 #define EINVAL       1
 #define E2BIG        2
 
-#define MAXMENUARGS  4
+#define MAXMENUARGS  7
 #define MAXCMDLINE   64
 
 //int schedular_policy = 0; //Defaults to FCFS
@@ -53,7 +54,7 @@ static struct {
 	{ "q\n",	cmd_quit },
 	{ "quit\n",	cmd_quit },
 	{ "list\n", cmd_list },
-	{ "test\n", cmd_bench },
+	{ "test", cmd_bench },
         /* Please add more operations below. */
         {NULL, NULL}
 };
