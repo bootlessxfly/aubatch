@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "commandline_parser.h"
 #include "aubatch.h"
 
@@ -25,6 +26,7 @@ int main(void) {
 	job_head = 0;
 	circular = 0;
 	count = 0;
+	timer = time(NULL);
 	ret = pthread_create(&cli_thread, NULL, run_cli, (void*) cli_message);
 	ret1 = pthread_create(&dispatch_thread, NULL, run_dispatchor, (void*) dispatch_message);
 	//printf("Test p: %d", priority);

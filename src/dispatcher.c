@@ -31,7 +31,9 @@ int dispatch_jobs() {
 			// else use the current head index
 			j = jobs[job_head - 1];
 		}
-
+		// Set the satus to running
+		j.status = 1;
+		jobs[job_head - 1] = j;
 		pthread_cond_signal(&cmd_buf_not_empty);
 		pthread_mutex_unlock(&cmd_queue_lock);
 		/*

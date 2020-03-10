@@ -17,7 +17,8 @@ struct job {
 	char _jobname[100];
 	int priority;
 	double exectime;
-	double arrivalTime;
+	int arrivalTime;
+	char *arrivalTimeString;
 	int status;
 
 };
