@@ -20,6 +20,26 @@ u_int count;
 time_t timer;
 time_t process_time;
 
+/*
+ * Variables used to track benchmarking
+ */
+u_int benchmark_running = 0;
+u_int benchmark_started = 0;
+u_int benchmark_start = 0;
+u_int benchmark_end = 0;
+u_int benchmark_curr_count = 0;
+char* benchmark_name;
+u_int benchmark_total_turnaround = 0;
+u_int benchmark_total_waiting_time = 0;
+time_t benchmark_total_time = 0;
+
+/*
+ * Variables to track all stats for displaying upon quit
+ */
+u_int total_turnaound = 0;
+u_int total_waiting = 0;
+u_int total_count = 0;
+
 char *policyname;
 
 /*

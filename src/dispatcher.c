@@ -13,6 +13,7 @@
 #include <time.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 int dispatch_jobs() {
 	while (1) {
@@ -33,6 +34,16 @@ int dispatch_jobs() {
 		// Set the satus to running
 		j.status = 1;
 		jobs[run_head] = j;
+		/*
+		 * This indicates that we should start tracking a benchmarks results
+		 */
+		if (benchmark_running == 1 && run_head == benchmark_start && benchmark_started == 0) {
+			benchmark_curr_count++;
+			benchmark_started = 1;
+		}
+		else {
+			benchmark_curr_count++;
+		}
 		run_head++;
 		/*
 		 * Reset the circular buffer
@@ -47,10 +58,20 @@ int dispatch_jobs() {
 		 * the shared jobs queue so that while a job is processing, the CPU can still schedule other jobs
 		 */
 		run_job(j);
+		total_count++;
 		pthread_mutex_lock(&cmd_queue_lock);
 		jobs[run_head - 1].status = 2;
 		pthread_mutex_unlock(&cmd_queue_lock);
 		count--;
+		if (benchmark_curr_count == benchmark_end) {
+			printf("The benchmark %s is over\n", benchmark_name);
+			printf("Total number of jobs submitted: %d\n", benchmark_end);
+
+			benchmark_curr_count = 0;
+			benchmark_end = 0;
+			benchmark_running = 0;
+			benchmark_started = 0;
+		}
 
 		circular = 1;
 

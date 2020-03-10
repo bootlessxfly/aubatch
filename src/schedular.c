@@ -26,6 +26,7 @@ int add_job(int policy, char *name, char *etime, char* prio) {
 	//char *policyname = malloc(7);
 	struct job j;
 	create_job(name, etime, prio, &j);
+	sleep(1); //Sleep for one second to simulate arrival time
 	if (policy == FCFS_ID) {
 		fcfs(j);
 	}
@@ -75,7 +76,12 @@ int calc_wait() {
 	if (count == 0) {
 		return 0;
 	}
-	start = run_head - 1;
+	if (run_head == 0) {
+		start = run_head;
+	}
+	else {
+		start = run_head - 1;
+	}
 	end = start + count;
 	for (int i = start; i < end; i++) {
 		if (jobs[i].status == 1) {
@@ -86,8 +92,13 @@ int calc_wait() {
 		else {
 			totalwait = totalwait + jobs[i].exectime;
 		}
-
+		if (totalwait < 0) {
+			// An error occur, we need to recalculate wiating time
+			i = start;
+			totalwait = 0;
+		}
 	}
+
 	return totalwait;
 }
 

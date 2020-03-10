@@ -29,14 +29,30 @@ extern u_int job_head;
 extern u_int run_head;
 extern u_int circular;
 extern u_int count;
-/*
- * Tracks total number of jobs
- */
-extern u_int total_job_count;
-extern u_int total_turn_bench;
-extern u_int total_wait_bench;
-extern time_t total_bench_t;
 extern time_t timer;
+
+/*
+ * Used to track individual benchmark run
+ * Only one benchmark can run at a time
+ */
+extern u_int benchmark_running;
+extern u_int benchmark_started;
+extern u_int benchmark_start;
+extern u_int benchmark_end;
+extern u_int benchmark_curr_count;
+extern char* benchmark_name;
+extern u_int benchmark_total_turnaround;
+extern u_int benchmark_total_waiting_time;
+extern time_t benchmark_total_time; // Used for throughput
+
+/*
+ * Variables to track all stats for displaying upon quit
+ */
+extern u_int total_turnaound;
+extern u_int total_waiting;
+extern u_int total_count;
+
+
 /*
  * The process time measures current progress of a process in seconds
  * It is used to accurately measure waiting time.

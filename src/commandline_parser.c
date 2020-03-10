@@ -25,7 +25,13 @@ int cmd_bench(int nargs, char **args) {
 		printf("usage: test <benchmark> <policy> <num_of_jobs> <priority_levels> <min_CPU_time> <max_CPU_time>\n");
 		return EINVAL;
 	}
+	if (benchmark_running == 1) {
+		printf("There is a benchmark currently running, please wait for it to finish\n");
+		return EXIT_SUCCESS;
+	}
 	char* name = otherargs[1];
+	benchmark_name = malloc(strlen(name));
+	strcpy(benchmark_name, name);
 	char* jname = malloc(3 * strlen(name));
 	int policyid;
 	int njob = atoi(otherargs[3]);
@@ -57,6 +63,14 @@ int cmd_bench(int nargs, char **args) {
 	else {
 		policy = policyid;
 	}
+	benchmark_running = 1;
+	if (count == 0) {
+		benchmark_start = 0;
+	}
+	else {
+		benchmark_start = job_head;
+	}
+	benchmark_end = njob;
 	for (int i = 0; i < njob; i++) {
 		prio = rand_range_gen(0, nprio);
 		time = rand_range_gen(mintime, maxtime);
@@ -74,7 +88,8 @@ int cmd_bench(int nargs, char **args) {
  * the range that the benchmark tool gives
  */
 int rand_range_gen(int low, int high) {
-	return (rand() % (high - low + 1)) + 1;
+	return (rand() % (high - low + 1)) + low;
+
 }
 
 int cmd_list(int nargs, char **args) {
