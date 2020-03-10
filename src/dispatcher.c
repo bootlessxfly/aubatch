@@ -46,17 +46,53 @@ int dispatch_jobs() {
 
 }
 
+/*
+ * Kick off a process using execv
+ * Some of this code was based on Dr. Qin's "fork_execv.c"
+ */
 void run_job(struct job j) {
-	//#ifdef DEBUG
-		printf("Running job: %s\n", j._jobname);
-	//#endif
-		// A call to execv should go here
-		int time = (int) j.exectime;
-				printf("Time to run is: %d\n", time);
-	sleep((int) time);
-	//#ifdef DEBUG
-		printf("Finished job: %s\n", j._jobname);
-	//#endif
+	pid_t pid;
+	char *args[5];
+//	  args[0] = "5";
+//	  args[1] = "5";
+//	  args[2] = "test";
+//	  args[3] = NULL;
+	int time = j.exectime;
+	args[0] = malloc(sizeof(int));
+	sprintf(args[0], "%d", time);
+	args[1] = malloc(sizeof(int));
+	sprintf(args[1], "%d", time);
+	args[2] = malloc(strlen(j._jobname));
+	strcpy(args[2], j._jobname);
+	args[3] = NULL;
+
+	pid = fork();
+	if (pid < 0) {
+		puts("There was an error forking the process");
+		return;
+	}
+	else if (pid == 0) {
+		puts("Child running ...");
+		//todo remove target before submitting
+
+		execv("./target/batch_job", args);
+		//system("./target/batch_job 5 test");
+
+	}
+	else {
+		wait();
+	}
+
+//	//#ifdef DEBUG
+//		printf("Running job: %s\n", j._jobname);
+//	//#endif
+//		// A call to execv should go here
+//		int time = (int) j.exectime;
+//				printf("Time to run is: %d\n", time);
+//	sleep((int) time);
+//	//#ifdef DEBUG
+//		printf("Finished job: %s\n", j._jobname);
+//	//#endif
 }
 
 

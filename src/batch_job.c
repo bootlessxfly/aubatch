@@ -20,7 +20,7 @@
 int main(int argc, char *argv[] )
 {
   int time = atoi(argv[1]);
-  printf("Running process %s ... \n", argv[2]);
+  printf("Running process %s for %d... \n", argv[2], time);
   sleep(time);
   printf("Done ... \n");
 
