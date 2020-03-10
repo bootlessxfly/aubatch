@@ -31,13 +31,14 @@ int dispatch_jobs() {
 			// else use the current head index
 			j = jobs[job_head - 1];
 		}
-
-		pthread_cond_signal(&cmd_buf_not_empty);
-		pthread_mutex_unlock(&cmd_queue_lock);
 		run_job(j);
 		count--;
-
 		circular = 1;
+		pthread_cond_signal(&cmd_buf_not_empty);
+		pthread_mutex_unlock(&cmd_queue_lock);
+
+
+
 
 //		if (circular == JOB_QUEUE_SIZE) {
 //			circular = 0;
