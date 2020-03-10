@@ -24,7 +24,7 @@ struct job {
 
 extern struct job jobs[JOB_QUEUE_SIZE];
 extern u_int job_head;
-extern u_int job_tail;
+extern u_int circular;
 extern u_int count;
 extern time_t timer;
 

@@ -19,16 +19,10 @@
 
 int main(int argc, char *argv[] )
 {
-  int i = 1;
-  printf("A process is running ...\n");
-  argc--;
-
-  /* Print all the arguments passed from the commandline */
-  while (argc > 0) {
-    printf ("Argument %d is: %s\n", i, argv[i]);
-    i++;
-    argc--;
-  }
+  int time = atoi(argv[1]);
+  printf("Running process %s ... \n", argv[2]);
+  sleep(time);
+  printf("Done ... \n");
 
   return 0;
 }

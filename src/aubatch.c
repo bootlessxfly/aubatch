@@ -23,9 +23,8 @@ int main(void) {
 
 	int ret, ret1;
 	job_head = 0;
-	job_tail = 0;
+	circular = 0;
 	count = 0;
-
 	ret = pthread_create(&cli_thread, NULL, run_cli, (void*) cli_message);
 	ret1 = pthread_create(&dispatch_thread, NULL, run_dispatchor, (void*) dispatch_message);
 	//printf("Test p: %d", priority);

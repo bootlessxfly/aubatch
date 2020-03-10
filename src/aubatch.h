@@ -14,7 +14,7 @@ int run_dispatchor();
 
 struct job jobs[JOB_QUEUE_SIZE];
 u_int job_head;
-u_int job_tail; // The end of the queue. job_tail - 1 is the queue ending index.
+u_int circular; //This represents the last job buffer. Used when head goes back to 0
 u_int count;
 time_t timer;
 

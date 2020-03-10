@@ -34,13 +34,19 @@ int fcfs(struct job j) {
 		pthread_cond_wait(&cmd_buf_not_full, &cmd_queue_lock);
 	}
 	j.arrivalTime = timer;
-	jobs[count] = j;
+	jobs[job_head] = j;
 	count++;
 
 	job_head++;
 	if (job_head == JOB_QUEUE_SIZE) {
 		job_head = 0;
 	}
+	/*
+	 * Dont iterate previous job count untill we have added more than one to the queue.
+	 */
+//	if (job_head > 1) {
+//		circular++;
+//	}
 	pthread_cond_signal(&cmd_buf_not_empty);
 	pthread_mutex_unlock(&cmd_queue_lock);
 
