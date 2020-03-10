@@ -31,14 +31,17 @@ int dispatch_jobs() {
 			// else use the current head index
 			j = jobs[job_head - 1];
 		}
-		run_job(j);
-		count--;
-		circular = 1;
+
 		pthread_cond_signal(&cmd_buf_not_empty);
 		pthread_mutex_unlock(&cmd_queue_lock);
+		/*
+		 * The running of the process sits out side of the critical lock of
+		 * the shared jobs queue so that while a job is processing, the CPU can still schedule other jobs
+		 */
+		run_job(j);
+		count--;
 
-
-
+		circular = 1;
 
 //		if (circular == JOB_QUEUE_SIZE) {
 //			circular = 0;
