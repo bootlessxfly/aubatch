@@ -37,7 +37,8 @@ int dispatch_jobs() {
 		/*
 		 * This indicates that we should start tracking a benchmarks results
 		 */
-		if (benchmark_running == 1 && run_head == benchmark_start && benchmark_started == 0) {
+		// Should look into adding benchmark_head back in
+		if (benchmark_running == 1 && benchmark_started == 0) {
 			benchmark_curr_count++;
 			benchmark_started = 1;
 			benchmark_total_time = time(NULL);
@@ -76,7 +77,7 @@ int dispatch_jobs() {
 		/*
 		 * This handles reporting benchmark info
 		 */
-		if (benchmark_curr_count == benchmark_end) {
+		if (benchmark_curr_count == benchmark_end && benchmark_started == 1) {
 			int now = time(NULL);
 			int endingtime = now - benchmark_total_time;
 			double turn =  ((double)benchmark_total_turnaround / (double) benchmark_end);
@@ -98,6 +99,7 @@ int dispatch_jobs() {
 			benchmmark_total_exec_time = 0;
 			benchmark_total_waiting_time = 0;
 			benchmark_total_time = 0;
+			time_offset = 0;
 		}
 
 		circular = 1;
