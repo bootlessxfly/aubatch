@@ -23,6 +23,9 @@ int cmd_helpmenu(int n, char **a);
 int cmd_list(int nargs, char **args);
 int cmd_bench(int nargs, char **args);
 int rand_range_gen(int low, int high);
+int switch_priority(int nargs, char **args);
+int switch_fcfs(int nargs, char **args);
+int switch_sjf(int nargs, char **args);
 
 /*
  * Error Codes.
@@ -55,6 +58,9 @@ static struct {
 	{ "quit\n",	cmd_quit },
 	{ "list\n", cmd_list },
 	{ "test", cmd_bench },
+	{ "fcfs\n", switch_fcfs },
+	{ "sjf\n", switch_sjf },
+	{ "priority\n", switch_priority },
         /* Please add more operations below. */
         {NULL, NULL}
 };

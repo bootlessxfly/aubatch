@@ -145,7 +145,7 @@ void run_job(struct job j) {
 	else if (pid == 0) {
 		//todo remove target before submitting
 
-		execv("./target/batch_job", args);
+		execv("./batch_job", args);
 		//system("./target/batch_job 5 test");
 
 	}

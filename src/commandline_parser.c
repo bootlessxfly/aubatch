@@ -92,6 +92,18 @@ int rand_range_gen(int low, int high) {
 
 }
 
+int switch_priority(int nargs, char **args) {
+	reschedule_priority();
+}
+
+int switch_fcfs(int nargs, char **args) {
+	reschedule_fcfs();
+}
+
+int switch_sjf(int nargs, char **args) {
+	reschedule_sjf();
+}
+
 int cmd_list(int nargs, char **args) {
 //	char *policyname = malloc(7);
 	int start;

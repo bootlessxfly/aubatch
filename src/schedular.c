@@ -101,10 +101,8 @@ int priority(struct job j) {
 	jobs[job_head] = j; //add to end of queue
 	struct job temp;
 	int countcheck = 0;
-	int countend = 0;
 	int pos;
 	printf("The count is: %d\n", count);
-	countcheck = job_head - (job_head - count + 1);
 	printf("starting sorting on %d\n", run_head);
 	printf("Going up to: %d\n", job_head);
 	// Sort Current Queue
@@ -120,6 +118,87 @@ int priority(struct job j) {
 		jobs[pos] = temp;
 	}
 
+}
+
+int reschedule_fcfs() {
+	set_policy(FCFS_ID);
+	if (count == 0) {
+		return 0;
+	}
+	pthread_mutex_lock(&cmd_queue_lock);
+	while (count == JOB_QUEUE_SIZE) {
+		pthread_cond_wait(&cmd_buf_not_full, &cmd_queue_lock);
+	}
+	struct job temp;
+	int pos;
+	// Sort Current Queue
+	for (int i = run_head; i < job_head; i++) {
+		pos = i;
+		for (int k = i + 1; k < job_head; k++) {
+			if (jobs[k].arrivalTime < jobs[pos].arrivalTime) {
+				pos = k;
+			}
+		}
+		temp = jobs[i];
+		jobs[i] = jobs[pos];
+		jobs[pos] = temp;
+	}
+	pthread_cond_signal(&cmd_buf_not_empty);
+	pthread_mutex_unlock(&cmd_queue_lock);
+}
+
+int reschedule_sjf() {
+	set_policy(SJF_ID);
+	if (count == 0) {
+		return 0;
+	}
+	pthread_mutex_lock(&cmd_queue_lock);
+	while (count == JOB_QUEUE_SIZE) {
+		pthread_cond_wait(&cmd_buf_not_full, &cmd_queue_lock);
+	}
+	struct job temp;
+	int pos;
+	// Sort Current Queue
+	for (int i = run_head; i < job_head; i++) {
+		pos = i;
+		for (int k = i + 1; k < job_head; k++) {
+			if (jobs[k].exectime < jobs[pos].exectime) {
+				pos = k;
+			}
+		}
+		temp = jobs[i];
+		jobs[i] = jobs[pos];
+		jobs[pos] = temp;
+	}
+	pthread_cond_signal(&cmd_buf_not_empty);
+	pthread_mutex_unlock(&cmd_queue_lock);
+}
+
+int reschedule_priority() {
+	set_policy(PRIO_ID);
+	if (count == 0) {
+		return 0;
+	}
+	pthread_mutex_lock(&cmd_queue_lock);
+	while (count == JOB_QUEUE_SIZE) {
+		pthread_cond_wait(&cmd_buf_not_full, &cmd_queue_lock);
+	}
+	struct job temp;
+	int pos;
+	// Sort Current Queue
+	for (int i = run_head; i < job_head; i++) {
+		pos = i;
+		for (int k = i + 1; k < job_head; k++) {
+			if (jobs[k].priority < jobs[pos].priority) {
+				pos = k;
+			}
+		}
+		temp = jobs[i];
+		jobs[i] = jobs[pos];
+		jobs[pos] = temp;
+	}
+	pthread_cond_signal(&cmd_buf_not_empty);
+	pthread_mutex_unlock(&cmd_queue_lock);
 }
 
 /*
@@ -270,7 +349,6 @@ void build_string(int time, struct job *j) {
 	arrival[strlen(arrival)] = '\0';
 	j->arrivalTimeString = malloc(strlen(arrival));
 	strcpy(j->arrivalTimeString, arrival);
-	//printf("The time is: %s", j->arrivalTimeString);
 }
 
 
