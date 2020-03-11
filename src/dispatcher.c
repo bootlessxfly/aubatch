@@ -40,6 +40,8 @@ int dispatch_jobs() {
 		if (benchmark_running == 1 && run_head == benchmark_start && benchmark_started == 0) {
 			benchmark_curr_count++;
 			benchmark_started = 1;
+			benchmark_total_time = time(NULL);
+			time_offset = benchmark_total_time - timer;
 		}
 		else {
 			benchmark_curr_count++;
@@ -58,19 +60,44 @@ int dispatch_jobs() {
 		 * the shared jobs queue so that while a job is processing, the CPU can still schedule other jobs
 		 */
 		run_job(j);
+		if (benchmark_started == 1) {
+			int now = time(NULL);
+			int ending = now - benchmark_total_time;
+			int turn = ending - (time_offset - j.arrivalTime);
+			benchmark_total_turnaround = benchmark_total_turnaround + turn;
+			benchmark_total_waiting_time = benchmark_total_waiting_time + j.waitingTime;
+			benchmmark_total_exec_time = benchmmark_total_exec_time + j.exectime;
+		}
 		total_count++;
 		pthread_mutex_lock(&cmd_queue_lock);
 		jobs[run_head - 1].status = 2;
 		pthread_mutex_unlock(&cmd_queue_lock);
 		count--;
+		/*
+		 * This handles reporting benchmark info
+		 */
 		if (benchmark_curr_count == benchmark_end) {
+			int now = time(NULL);
+			int endingtime = now - benchmark_total_time;
+			double turn =  ((double)benchmark_total_turnaround / (double) benchmark_end);
+			double exect = ((double) benchmmark_total_exec_time / (double) benchmark_end);
+			double waiting = ((double) benchmark_total_waiting_time / (double)benchmark_end);
+			double through = ((double)benchmark_end / (double)endingtime);
 			printf("The benchmark %s is over\n", benchmark_name);
 			printf("Total number of jobs submitted: %d\n", benchmark_end);
+			printf("Average turn around time: %f seconds\n", turn);
+			printf("Average execution time: %f seconds\n", exect);
+			printf("Average waiting time: %f seconds\n", waiting);
+			printf("Throughput: %f\n", through);
 
 			benchmark_curr_count = 0;
 			benchmark_end = 0;
 			benchmark_running = 0;
 			benchmark_started = 0;
+			benchmark_total_turnaround = 0;
+			benchmmark_total_exec_time = 0;
+			benchmark_total_waiting_time = 0;
+			benchmark_total_time = 0;
 		}
 
 		circular = 1;

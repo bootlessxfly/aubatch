@@ -31,6 +31,8 @@ u_int benchmark_curr_count = 0;
 char* benchmark_name;
 u_int benchmark_total_turnaround = 0;
 u_int benchmark_total_waiting_time = 0;
+u_int benchmmark_total_exec_time = 0;
+u_int time_offset = 0;
 time_t benchmark_total_time = 0;
 
 /*

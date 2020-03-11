@@ -43,6 +43,8 @@ extern u_int benchmark_curr_count;
 extern char* benchmark_name;
 extern u_int benchmark_total_turnaround;
 extern u_int benchmark_total_waiting_time;
+extern u_int benchmmark_total_exec_time;
+extern u_int time_offset;
 extern time_t benchmark_total_time; // Used for throughput
 
 /*
