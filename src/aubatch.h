@@ -41,6 +41,7 @@ time_t benchmark_total_time = 0;
 u_int total_turnaound = 0;
 u_int total_waiting = 0;
 u_int total_count = 0;
+u_int total_exec = 0;
 
 char *policyname;
 

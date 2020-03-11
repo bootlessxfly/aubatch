@@ -53,6 +53,7 @@ extern time_t benchmark_total_time; // Used for throughput
 extern u_int total_turnaound;
 extern u_int total_waiting;
 extern u_int total_count;
+extern u_int total_exec;
 
 
 /*

@@ -70,6 +70,12 @@ int dispatch_jobs() {
 			benchmmark_total_exec_time = benchmmark_total_exec_time + j.exectime;
 		}
 		total_count++;
+		int now = time(NULL);
+		int ending = now - timer;
+		int turn = ending - j.arrivalTime;
+		total_turnaound = total_turnaound + turn;
+		total_waiting = total_waiting + j.waitingTime;
+		total_exec = total_exec + j.exectime;
 		pthread_mutex_lock(&cmd_queue_lock);
 		jobs[run_head - 1].status = 2;
 		pthread_mutex_unlock(&cmd_queue_lock);

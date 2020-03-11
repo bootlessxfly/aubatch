@@ -185,7 +185,25 @@ int cmd_run(int nargs, char **args) {
  * Taken from Dr. Qin's "commlandline_parser.c" example
  */
 int cmd_quit(int nargs, char **args) {
-	printf("Please display performance information before exiting AUbatch!\n");
+	//printf("Please display performance information before exiting AUbatch!\n");
+	int now = time(NULL);
+	int endingtime = now - timer;
+	double turn =  ((double)total_turnaound / (double) total_count);
+	double exect = ((double) total_exec / (double) total_count);
+	double waiting = ((double) total_waiting / (double)total_count);
+	double through = ((double)total_count / (double)endingtime);
+	printf("The program is terminating. Here are some stats about the jobs that have been processed\n");
+	if (total_count == 0) {
+		printf("No jobs have been processed. Nothing to display ... \n");
+		exit(0);
+	}
+	printf("Jobs have been processed. Below are the stats of all jobs since the program started ...\n");
+	printf("The benchmark %s is over\n", benchmark_name);
+	printf("Total number of jobs submitted: %d\n", benchmark_end);
+	printf("Average turn around time: %f seconds\n", turn);
+	printf("Average execution time: %f seconds\n", exect);
+	printf("Average waiting time: %f seconds\n", waiting);
+	printf("Throughput: %f\n", through);
         exit(0);
 }
 
