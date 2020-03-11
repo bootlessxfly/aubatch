@@ -9,7 +9,7 @@
 #include <string.h>
 #include <time.h>
 
-int run_policy(int policy) {
+int set_policy(int policy) {
 	if (policy == FCFS_ID) {
 		strcpy(policyname, "FCFS");
 	}
@@ -24,18 +24,29 @@ int run_policy(int policy) {
 
 int add_job(int policy, char *name, char *etime, char* prio) {
 	//char *policyname = malloc(7);
+	set_policy(policy);
 	struct job j;
 	create_job(name, etime, prio, &j);
-	sleep(1); //Sleep for one second to simulate arrival time
+	pthread_mutex_lock(&cmd_queue_lock);
+	while (count == JOB_QUEUE_SIZE) {
+		pthread_cond_wait(&cmd_buf_not_full, &cmd_queue_lock);
+	}
 	if (policy == FCFS_ID) {
 		fcfs(j);
 	}
 	else if (policy == SJF_ID) {
-
+		sjf(j);
 	}
 	else if (policy == PRIO_ID) {
-
+		priority(j);
 	}
+	count++;
+	job_head++;
+	if (job_head == JOB_QUEUE_SIZE) {
+		job_head = 0;
+	}
+	pthread_cond_signal(&cmd_buf_not_empty);
+	pthread_mutex_unlock(&cmd_queue_lock);
 	printf("Job %s was submitted.\n"
 			"Total number of jobs in the queue: %d\n"
 			"Expected waiting time is: %d seconds\n"
@@ -47,22 +58,67 @@ int fcfs(struct job j) {
 	/*
 	 * Only set the arrival time once actually placed in queue.
 	 */
-	pthread_mutex_lock(&cmd_queue_lock);
-	while (count == JOB_QUEUE_SIZE) {
-		pthread_cond_wait(&cmd_buf_not_full, &cmd_queue_lock);
-	}
+
 	set_arrival(&j);
 
 	//j.arrivalTime = time;
 	jobs[job_head] = j;
-	count++;
 
-	job_head++;
-	if (job_head == JOB_QUEUE_SIZE) {
-		job_head = 0;
+
+
+	return EXIT_SUCCESS;
+
+}
+
+int sjf(struct job j) {
+	set_arrival(&j);
+	jobs[job_head] = j; //add to end of queue
+	struct job temp;
+	int countcheck = 0;
+	int countend = 0;
+	int pos;
+	printf("The count is: %d\n", count);
+	countcheck = job_head - (job_head - count + 1);
+	printf("starting sorting on %d\n", run_head);
+	printf("Going up to: %d\n", job_head);
+	// Sort Current Queue
+	for (int i = run_head; i < job_head; i++) {
+		pos = i;
+		for (int k = i + 1; k <= job_head; k++) {
+			if (jobs[k].exectime < jobs[pos].exectime) {
+				pos = k;
+			}
+		}
+		temp = jobs[i];
+		jobs[i] = jobs[pos];
+		jobs[pos] = temp;
 	}
-	pthread_cond_signal(&cmd_buf_not_empty);
-	pthread_mutex_unlock(&cmd_queue_lock);
+
+}
+
+int priority(struct job j) {
+	set_arrival(&j);
+	jobs[job_head] = j; //add to end of queue
+	struct job temp;
+	int countcheck = 0;
+	int countend = 0;
+	int pos;
+	printf("The count is: %d\n", count);
+	countcheck = job_head - (job_head - count + 1);
+	printf("starting sorting on %d\n", run_head);
+	printf("Going up to: %d\n", job_head);
+	// Sort Current Queue
+	for (int i = run_head; i < job_head; i++) {
+		pos = i;
+		for (int k = i + 1; k <= job_head; k++) {
+			if (jobs[k].priority < jobs[pos].priority) {
+				pos = k;
+			}
+		}
+		temp = jobs[i];
+		jobs[i] = jobs[pos];
+		jobs[pos] = temp;
+	}
 
 }
 
@@ -70,6 +126,7 @@ int fcfs(struct job j) {
  *
  */
 int calc_wait() {
+	sleep(1); //Sleep for one second to simulate arrival time
 	int start;
 	int end;
 	int totalwait = 0;
@@ -94,6 +151,11 @@ int calc_wait() {
 		}
 		if (totalwait < 0) {
 			// An error occur, we need to recalculate wiating time
+			i = start;
+			totalwait = 0;
+		}
+		if (totalwait == 0) {
+			// Some error occured, lets recalc.
 			i = start;
 			totalwait = 0;
 		}

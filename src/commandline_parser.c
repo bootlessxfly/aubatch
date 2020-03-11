@@ -43,13 +43,13 @@ int cmd_bench(int nargs, char **args) {
 	char* jnum = malloc(strlen(otherargs[3]));
 	int time = 0;
 	int prio = 0;
-	if (strcmp(otherargs[2], "FCFS")) {
+	if (strcmp(otherargs[2], "FCFS") == 0) {
 		policyid = FCFS_ID;
 	}
-	else if (strcmp(otherargs[2], "SJF")) {
+	else if (strcmp(otherargs[2], "SJF") == 0) {
 		policyid = SJF_ID;
 	}
-	else if (strcmp(otherargs[2], "priority")) {
+	else if (strcmp(otherargs[2], "priority") == 0) {
 		policyid = PRIO_ID;
 	}
 	else {
