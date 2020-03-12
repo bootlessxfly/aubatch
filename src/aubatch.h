@@ -1,13 +1,19 @@
 /*
- * aubatch.h
- *
- *  Created on: Mar 8, 2020
- *      Author: chwhite
+ ============================================================================
+ Name        : aubatch.h
+ Author      : Christoph White
+ Version     :
+ Copyright   :
+ Description : Peices of this have come from Dr. Qin's aubatch_sample.c file
+ This is the parent thread for the entire program. It hanldes initializing all of the
+ variables in the shared memory realm, and creates the commandline/scheduling
+ and dispatcher threads.
+ ============================================================================
  */
 
 #ifndef AUBATCH_H_
 #define AUBATCH_H_
-#include "jobs.h"
+#include "shared_memory.h"
 
 int run_cli();
 int run_dispatchor();

@@ -1,10 +1,13 @@
 /*
  ============================================================================
- Name        : AUBatch.c
+ Name        : aubatch.c
  Author      : Christoph White
  Version     :
  Copyright   : 
  Description : Peices of this have come from Dr. Qin's aubatch_sample.c file
+ This is the parent thread for the entire program. It hanldes initializing all of the
+ variables in the shared memory realm, and creates the commandline/scheduling
+ and dispatcher threads.
  ============================================================================
  */
 
@@ -32,16 +35,13 @@ int main(void) {
 	timer = time(NULL);
 	ret = pthread_create(&cli_thread, NULL, run_cli, (void*) cli_message);
 	ret1 = pthread_create(&dispatch_thread, NULL, run_dispatchor, (void*) dispatch_message);
-	//printf("Test p: %d", priority);
+
     pthread_mutex_init(&cmd_queue_lock, NULL);
     pthread_cond_init(&cmd_buf_not_full, NULL);
     pthread_cond_init(&cmd_buf_not_empty, NULL);
 
     pthread_join(cli_thread, NULL);
     pthread_join(dispatch_thread, NULL);
-
-    printf("cli_thread ... return value: %d", ret);
-    printf("dispatch_thread ... return value: %d", ret1);
 
 	return EXIT_SUCCESS;
 }

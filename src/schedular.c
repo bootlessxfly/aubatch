@@ -1,20 +1,27 @@
 /*
- * schedular.c
- *
- *  Created on: Mar 8, 2020
- *      Author: chwhite
+ ============================================================================
+ Name        : scheduler.c
+ Author      : Christoph White
+ Version     :
+ Copyright   :
+ Description : This is partially based off of Dr. Qin's aubatch_sample example
+ This hanldes taking in a job and adding it to the job queue based on a policy
+ It handles creating and populating the job structure as well as calulating
+ arrival and waiting time. If a policy change comes in, there is functionality
+ to reschedule the queue based on the new policy.
+ ============================================================================
  */
 #include "schedular.h"
-#include "jobs.h"
 #include <string.h>
 #include <time.h>
+#include "shared_memory.h"
 
 int set_policy(int policy) {
 	if (policy == FCFS_ID) {
 		strcpy(policyname, "FCFS");
 	}
 	else if (policy == SJF_ID) {
-		strcpy(policyname, "SFJ");
+		strcpy(policyname, "SJF");
 	}
 	else if (policy == PRIO_ID) {
 		strcpy(policyname, "priority");
@@ -23,7 +30,6 @@ int set_policy(int policy) {
 }
 
 int add_job(int policy, char *name, char *etime, char* prio) {
-	//char *policyname = malloc(7);
 	set_policy(policy);
 	struct job j;
 	create_job(name, etime, prio, &j);
@@ -61,7 +67,6 @@ int fcfs(struct job j) {
 
 	set_arrival(&j);
 
-	//j.arrivalTime = time;
 	jobs[job_head] = j;
 
 
@@ -74,13 +79,7 @@ int sjf(struct job j) {
 	set_arrival(&j);
 	jobs[job_head] = j; //add to end of queue
 	struct job temp;
-	int countcheck = 0;
-	int countend = 0;
 	int pos;
-	printf("The count is: %d\n", count);
-	countcheck = job_head - (job_head - count + 1);
-	printf("starting sorting on %d\n", run_head);
-	printf("Going up to: %d\n", job_head);
 	// Sort Current Queue
 	for (int i = run_head; i < job_head; i++) {
 		pos = i;
@@ -102,9 +101,6 @@ int priority(struct job j) {
 	struct job temp;
 	int countcheck = 0;
 	int pos;
-	printf("The count is: %d\n", count);
-	printf("starting sorting on %d\n", run_head);
-	printf("Going up to: %d\n", job_head);
 	// Sort Current Queue
 	for (int i = run_head; i < job_head; i++) {
 		pos = i;
@@ -245,7 +241,7 @@ int calc_wait() {
 
 /*
  * This stores the arrival time in seconds
- * And then stores the srivval time as HH:MM:SS for the list functionl ater on
+ * And then stores the arivval time as HH:MM:SS for the list functionl ater on
  */
 void set_arrival(struct job *j) {
 	time_t secs = time(NULL);

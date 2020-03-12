@@ -1,8 +1,15 @@
 /*
- * schedular.h
- *
- *  Created on: Mar 8, 2020
- *      Author: chwhite
+ ============================================================================
+ Name        : scheduler.h
+ Author      : Christoph White
+ Version     :
+ Copyright   :
+ Description : This is partially based off of Dr. Qin's aubatch_sample example
+ This hanldes taking in a job and adding it to the job queue based on a policy
+ It handles creating and populating the job structure as well as calulating
+ arrival and waiting time. If a policy change comes in, there is functionality
+ to reschedule the queue based on the new policy.
+ ============================================================================
  */
 
 #ifndef SCHEDULAR_H_

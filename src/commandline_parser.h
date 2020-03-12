@@ -5,10 +5,11 @@
  Version     :
  Copyright   :
  Description  This is the commandline interface for aubatch. I used Dr. Qin's commandline_parser.c
- as a reference to write this
+ as a reference to write this. When this program exits with the quit command, the
+ parent process that created this thread will kill all of it's children thread except
+ the currently running job.
  ============================================================================
  */
-
 #ifndef COMMANDLINE_PARSER_H_
 #define COMMANDLINE_PARSER_H_
 

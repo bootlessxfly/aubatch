@@ -1,19 +1,22 @@
 /*
  ============================================================================
- Name        : AUBatch.c
+ Name        : dispatcher.c
  Author      : Christoph White
  Version     :
  Copyright   :
- Description : Used Dr. Qin's "process.c" Code as an example
+ Description : This is partially based off of Dr. Qin's aubatch_sample example
+ This handles the running each job that is in queue. This will not try to run
+ any jobs unless the queue is not empty. This also handles keeping up with
+ performance and metrics information
  ============================================================================
  */
 
 #include "dispatcher.h"
-#include "jobs.h"
 #include <time.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include "shared_memory.h"
 
 int dispatch_jobs() {
 	while (1) {
@@ -107,12 +110,11 @@ int dispatch_jobs() {
 			benchmark_total_time = 0;
 			time_offset = 0;
 		}
-
+		/*
+		 * This indicates when a ciruclar buffer as looped
+		 * back to the beginning fo the array at least once
+		 */
 		circular = 1;
-
-//		if (circular == JOB_QUEUE_SIZE) {
-//			circular = 0;
-//		}
 	}
 
 }
@@ -124,10 +126,6 @@ int dispatch_jobs() {
 void run_job(struct job j) {
 	pid_t pid;
 	char *args[5];
-//	  args[0] = "5";
-//	  args[1] = "5";
-//	  args[2] = "test";
-//	  args[3] = NULL;
 	int etime = j.exectime;
 	args[0] = malloc(sizeof(int));
 	sprintf(args[0], "%d", etime);
@@ -143,13 +141,13 @@ void run_job(struct job j) {
 		return;
 	}
 	else if (pid == 0) {
-		//todo remove target before submitting
-
 		execv("./batch_job", args);
-		//system("./target/batch_job 5 test");
 
 	}
 	else {
+		/*
+		 * Wait for launched process to finish before moving on.
+		 */
 		wait();
 	}
 }

@@ -5,7 +5,9 @@
  Version     :
  Copyright   :
  Description  This is the commandline interface for aubatch. I used Dr. Qin's commandline_parser.c
- as a reference to write this
+ as a reference to write this. When this program exits with the quit command, the
+ parent process that created this thread will kill all of it's children thread except
+ the currently running job.
  ============================================================================
  */
 
@@ -15,9 +17,9 @@
 #include <assert.h>
 #include <string.h>
 #include "commandline_parser.h"
-#include "jobs.h"
 #include "schedular.h"
 #include "string.h"
+#include "shared_memory.h"
 
 
 int cmd_bench(int nargs, char **args) {
@@ -43,10 +45,10 @@ int cmd_bench(int nargs, char **args) {
 	char* jnum = malloc(strlen(otherargs[3]));
 	int time = 0;
 	int prio = 0;
-	if (strcmp(otherargs[2], "FCFS") == 0) {
+	if (strcmp(otherargs[2], "FCFS") == 0 || strcmp(otherargs[2], "fcfs") == 0) {
 		policyid = FCFS_ID;
 	}
-	else if (strcmp(otherargs[2], "SJF") == 0) {
+	else if (strcmp(otherargs[2], "SJF") == 0 || strcmp(otherargs[2], "sjf") == 0) {
 		policyid = SJF_ID;
 	}
 	else if (strcmp(otherargs[2], "priority") == 0) {
@@ -57,8 +59,21 @@ int cmd_bench(int nargs, char **args) {
 				"\tFCFS, SJF, policy.\n", otherargs[2]);
 		return EXIT_FAILURE;
 	}
+	/*
+	 * If the current polic does not match the benchmarks policy, switch it.
+	 * If there are already jobs loaded, reschedule them
+	 */
 	if (policyid != policy && count > 0) {
-		//trigger a policy change?
+		policy = policyid;
+		if (policy == FCFS_ID) {
+			reschedule_fcfs();
+		}
+		else if (policy == SJF_ID) {
+			reschedule_sjf();
+		}
+		else if (policy == PRIO_ID) {
+			reschedule_priority();
+		}
 	}
 	else {
 		policy = policyid;
@@ -105,12 +120,8 @@ int switch_sjf(int nargs, char **args) {
 }
 
 int cmd_list(int nargs, char **args) {
-//	char *policyname = malloc(7);
 	int start;
 	int end;
-//	if (policy == FCFS_ID) {
-//		strcpy(policyname, "FCFS");
-//	}
 	if (count == 0) {
 		printf("Total number of jobs in the queue: %d\n", count);
 		printf("Scheduling Policy: %s\n", policyname);
@@ -185,8 +196,6 @@ int cmd_run(int nargs, char **args) {
 		printf("Usage: run <job> <time> <priority>\n");
 		return EINVAL;
 	}
-        /* Use execv to run the submitted job in AUbatch */
-        //printf("use execv to run the job in AUbatch.\n");
 	add_job(policy, otherargs[1], otherargs[2], otherargs[3]);
 	struct job j = jobs[job_head];
     return 0; /* if succeed */
@@ -210,8 +219,7 @@ int cmd_quit(int nargs, char **args) {
 		exit(0);
 	}
 	printf("Jobs have been processed. Below are the stats of all jobs since the program started ...\n");
-	printf("The benchmark %s is over\n", benchmark_name);
-	printf("Total number of jobs submitted: %d\n", benchmark_end);
+	printf("Total number of jobs submitted: %d\n", total_count);
 	printf("Average turn around time: %f seconds\n", turn);
 	printf("Average execution time: %f seconds\n", exect);
 	printf("Average waiting time: %f seconds\n", waiting);
@@ -246,14 +254,6 @@ void showmenu(const char *name, const char *x[])
 	printf("\n");
 }
 
-//static const char *helpmenu[] = {
-//	"[run] <job> <time> <priority>       ",
-//	"[quit] Exit AUbatch                 ",
-//	"[help] Print help menu              ",
-//        /* Please add more menu options below */
-//	NULL
-//};
-
 int cmd_helpmenu(int n, char **a)
 {
 	(void)n;
@@ -262,25 +262,6 @@ int cmd_helpmenu(int n, char **a)
 	showmenu("AUbatch help menu", helpmenu);
 	return 0;
 }
-
-/*
- *  Command table.
- */
-//static struct {
-//	const char *name;
-//	int (*func)(int nargs, char **args);
-//} cmdtable[] = {
-//	/* commands: single command must end with \n */
-//	{ "?\n",	cmd_helpmenu },
-//	{ "h\n",	cmd_helpmenu },
-//	{ "help\n",	cmd_helpmenu },
-//	{ "r",		cmd_run },
-//	{ "run",	cmd_run },
-//	{ "q\n",	cmd_quit },
-//	{ "quit\n",	cmd_quit },
-//        /* Please add more operations below. */
-//        {NULL, NULL}
-//};
 
 /*
  * Process a single command.

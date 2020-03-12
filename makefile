@@ -3,7 +3,7 @@ SRC_DIR=src/
 BATCH_OUT=$(OUT_FOLDER)batch_job
 BATCH_OBJ=$(SRC_DIR)batch_job.c
 OUT_FOLDER=target/
-OBJS=$(SRC_DIR)aubatch.c $(SRC_DIR)commandline_parser.c $(SRC_DIR)dispatcher.c $(SRC_DIR)schedular.c $(SRC_DIR)jobs.h
+OBJS=$(SRC_DIR)aubatch.c $(SRC_DIR)commandline_parser.c $(SRC_DIR)dispatcher.c $(SRC_DIR)schedular.c $(SRC_DIR)shared_memory.h
 
 RM=rm -rf
 CC=gcc -g -o
